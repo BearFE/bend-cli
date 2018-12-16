@@ -1,6 +1,6 @@
 {
     "name": "bend-cli",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "一站式解决方案命令行工具",
     "author": "zchar.hong@qq.com",
     "bin": {

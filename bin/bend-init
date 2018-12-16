@@ -96,7 +96,7 @@ function run() {
             spinner.start();
 
             download(
-                'github:BearFE/bend-sdk',
+                'github:BearFE/bEnd',
                 to,
                 {
                     clone: true
