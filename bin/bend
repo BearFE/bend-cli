@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+require('commander')
+    .version(require('../package').version)
+    .description('Contact: zchar.hong@qq.com')
+    .usage('<command> [options]')
+    .command('init', '初始化B端服务方案')
+    .parse(process.argv);

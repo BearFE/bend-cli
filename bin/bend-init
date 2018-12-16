@@ -1,0 +1,145 @@
+#!/usr/bin/env node
+
+// * 依赖声明
+const download = require('download-git-repo');
+const program = require('commander');
+const exists = require('fs').existsSync;
+const path = require('path');
+const ora = require('ora');
+const chalk = require('chalk');
+const inquirer = require('inquirer');
+const rm = require('rimraf').sync;
+const exec = require('child_process').execSync;
+const shell = require('shelljs');
+
+// 错误提示
+const logger = require('../lib/logger');
+// 版本检测
+const checkVersion = require('../lib/check-version');
+
+// * 命令定义
+// 定义 Usage
+program
+    .usage('[project-name]');
+
+// 定义 Help
+program.on('--help', () => {
+    console.log();
+    console.log('  Examples:');
+    console.log();
+    console.log(chalk.gray('    # create a new bEnd project'));
+    console.log('    $ bend init [project-name]');
+    console.log();
+});
+
+// 如果没带参数，则调用help
+function help() {
+    program.parse(process.argv);
+
+    if (program.args.length < 1) {
+        return program.help();
+    }
+}
+
+help();
+
+const name = program.args[0];
+
+// 暂不支持在当前文件路径初始化
+if (name === '.') {
+    logger.fatal(
+        `暂不支持 ${chalk.green('bend init .')} 的使用方式，请使用 ${chalk.green('bend init [project-name]')} 创建项目`
+    );
+}
+
+const to = path.resolve(name);
+
+// * 前置检测
+// 检查 git 安装
+if (!shell.which('git')) {
+    logger.fatal('请安装git');
+}
+
+// * 如果存在同名文件夹
+if (exists(to)) {
+    try {
+        inquirer.prompt([{
+            type: 'confirm',
+            message: `目标目录${chalk.green(name)}已存在?继续将覆盖该目录.`,
+            name: 'isovercover'
+        }]).then(answers => {
+            if (answers.isovercover) {
+                try {
+                    rm(to);
+                }
+                catch (e) {
+                    logger.fatal(e);
+                }
+
+                run();
+            }
+        }).catch(logger.fatal);
+    }
+    catch (err) {
+        logger.fatal(err);
+    }
+}
+else {
+    run();
+}
+
+// * 执行拉取
+function run() {
+    try {
+        checkVersion(() => {
+            const spinner = ora('downloading bend-tempate.');
+            spinner.start();
+
+            download(
+                'github:BearFE/bend-sdk',
+                to,
+                {
+                    clone: true
+                },
+                function (err) {
+                    spinner.stop();
+
+                    if (err) {
+                        logger.fatal('Failed to download bend-template' + err.message.trim());
+                    }
+                    else {
+                        console.log();
+                        logger.success('Finished download bend-template');
+
+                        try {
+                            shell.cd(to);
+
+                            // TODO: 如果有pre-commit，则需要先 init 再进行 npm i
+                            // console.log();
+                            // shell.exec('git init .');
+
+                            // 安装 node_modules
+                            console.log();
+                            logger.log('start installing node_modules.');
+                            shell.exec('npm install');
+
+                            logger.success('Finished npm install');
+                            shell.exec('git config --global http.postBuffer 524288000');
+
+                            spinner.stop();
+                            logger.success(`Finished project ${name} generate.`);
+                            logger.success(`cd ${name} && npm run dev`);
+                        }
+                        catch (e) {
+                            console.log(chalk.red('Failed'), e);
+                            spinner.stop();
+                        }
+                    }
+                }
+            );
+        });
+    }
+    catch (err) {
+        console.log(err);
+    }
+}

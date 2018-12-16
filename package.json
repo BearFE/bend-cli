@@ -1,0 +1,30 @@
+{
+    "name": "bend-cli",
+    "version": "0.0.2",
+    "description": "一站式解决方案命令行工具",
+    "author": "zchar.hong@qq.com",
+    "bin": {
+        "bend": "bin/bend",
+        "bend-init": "bin/bend-init"
+    },
+    "scripts": {
+        "release": "npm publish --registry=http://registry.npmjs.org"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BearFE/bend-cli"
+    },
+    "engines": {
+        "node": ">=9.0"
+    },
+    "dependencies": {
+        "chalk": "^2.4.1",
+        "commander": "^2.15.1",
+        "download-git-repo": "^1.0.2",
+        "inquirer": "5.2.0",
+        "ora": "^2.1.0",
+        "rimraf": "^2.6.2",
+        "semver": "^5.5.0",
+        "shelljs": "^0.8.1"
+    }
+}
