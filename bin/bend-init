@@ -105,18 +105,18 @@ function run() {
                     spinner.stop();
 
                     if (err) {
-                        logger.fatal('Failed to download bend-template' + err.message.trim());
+                        logger.fatal('Failed to download bEnd' + err.message.trim());
                     }
                     else {
                         console.log();
-                        logger.success('Finished download bend-template');
+                        logger.success('Finished download bEnd');
 
                         try {
                             shell.cd(to);
 
                             // TODO: 如果有pre-commit，则需要先 init 再进行 npm i
-                            // console.log();
-                            // shell.exec('git init .');
+                            console.log();
+                            shell.exec('git init .');
 
                             // 安装 node_modules
                             console.log();
@@ -129,6 +129,7 @@ function run() {
                             spinner.stop();
                             logger.success(`Finished project ${name} generate.`);
                             logger.success(`cd ${name} && npm run dev`);
+                            console.log();
                         }
                         catch (e) {
                             console.log(chalk.red('Failed'), e);
