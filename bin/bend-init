@@ -92,7 +92,7 @@ else {
 function run() {
     try {
         checkVersion(() => {
-            const spinner = ora('downloading bend-tempate.');
+            const spinner = ora('downloading bEnd.');
             spinner.start();
 
             download(
